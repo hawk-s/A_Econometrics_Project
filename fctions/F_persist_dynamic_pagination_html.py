@@ -7,7 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
 
-def persist_html_content_dynamic(urls, table_id, file_name='combined_data.html', wait_time=10):
+def persist_html_content_dynamic_pagination(urls, table_id, file_name='combined_data.html', wait_time=10):
     """
     Fetches the HTML content of web pages using Selenium, clicks through table pagination to ensure all data is loaded,
     and persists it as a single HTML document.
@@ -67,4 +67,4 @@ def persist_html_content_dynamic(urls, table_id, file_name='combined_data.html',
 # Usage example:
 # sites_to_visit = ['http://example.com/tablepage1', 'http://example.com/tablepage2']
 # table_id = "prices"  # Replace with the ID of your table
-# persist_html_content_dynamic(sites_to_visit, table_id)
+# persist_html_content_dynamic_pagination(sites_to_visit, table_id)
