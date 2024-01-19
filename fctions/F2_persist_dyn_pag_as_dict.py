@@ -131,7 +131,7 @@ fetch_html_content_with_pagination(urls_dict, output_dir)
 '''
 
 #third and last update - for saving the files to the default directory (current)
-
+'''
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -194,7 +194,7 @@ def fetch_html_content_with_pagination(urls_dict, output_directory=None, wait_ti
 
     driver.quit()
     print(f"HTML content saved in directory: {output_directory}")
-
+'''
 '''
 # Usage example
 json_file_path = 'path_to_your_json_file.json'
@@ -203,3 +203,54 @@ with open(json_file_path, 'r') as file:
 
 fetch_html_content_with_pagination(urls_dict)
 '''
+
+##hmm, so the last time:): this time it saves each of the cards html separately 
+#(since before it lead to an out of memory error...)
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
+import json
+import os
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+
+def fetch_html_content_with_pagination(urls_dict, output_directory=None, wait_time=10):
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service)
+
+    if not output_directory:
+        output_directory = os.getcwd()
+
+    for set_name, urls in urls_dict.items():
+        set_folder = os.path.join(output_directory, set_name)
+        os.makedirs(set_folder, exist_ok=True)
+
+        for index, url in enumerate(urls):
+            driver.get(url)
+            WebDriverWait(driver, wait_time).until(lambda d: d.execute_script('return document.readyState') == 'complete')
+            card_html = ""
+
+            while True:
+                source = driver.page_source
+                soup = BeautifulSoup(source, 'lxml')
+                card_html += str(soup)
+
+                try:
+                    next_button = WebDriverWait(driver, wait_time).until(
+                        EC.element_to_be_clickable((By.XPATH, "//a[contains(@class, 'paginate_button next') and not(contains(@class, 'disabled'))]"))
+                    )
+                    next_button.click()
+                    WebDriverWait(driver, wait_time).until(lambda d: d.execute_script('return document.readyState') == 'complete')
+                except (TimeoutException, NoSuchElementException):
+                    break
+
+            file_path = os.path.join(set_folder, f"card_{index + 1}.html")
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(card_html)
+
+    driver.quit()
+    print(f"HTML content saved in directory: {output_directory}")
