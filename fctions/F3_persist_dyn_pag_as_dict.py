@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import os
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-def fetch_html_content_with_pagination(urls_dict, start_set_name, output_directory=None, wait_time=10):
+def fetch_html_content_with_pagination_2(urls_dict, start_set_name, output_directory=None, wait_time=10):
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service)
 
@@ -65,5 +65,5 @@ def fetch_html_content_with_pagination(urls_dict, start_set_name, output_directo
 '''
 # Example of how to call the function
 urls_dict = {'Set1': ['url1', 'url2'], 'Set2': ['url3', 'url4']}
-fetch_html_content_with_pagination(urls_dict, start_set_name='Set2')
+fetch_html_content_with_pagination_2(urls_dict, start_set_name='Set2')
 '''
